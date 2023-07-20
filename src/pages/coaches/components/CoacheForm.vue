@@ -32,9 +32,6 @@ import { inputRegs, listAreas } from "common/extend";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    resetForm: Function,
-  },
   emits: ["save-data"],
   data() {
     return {
@@ -98,11 +95,6 @@ export default defineComponent({
         if (key === "rate" && this.validCoache.validRate) return true;
         return false;
       };
-    },
-    resetForm() {
-      for (let key in inputReg) {
-        inputReg[key] = "";
-      }
     },
   },
 });

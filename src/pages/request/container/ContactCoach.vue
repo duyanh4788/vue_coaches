@@ -1,17 +1,19 @@
 <template>
-  <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
-    ><p>{{ error }}</p></v-notifi
-  >
-  <form @submit.prevent="submitSendMessage">
-    <div class="form-control" v-for="item of dataInputForms" :key="item.id">
-      <label :for="item.value">{{ item.label }}</label>
-      <input :type="item.type" :id="item.value" v-model.trim="contact[item.value]" />
-      <span v-if="isValid && contact[item.value] === ''" class="errors">***Please input {{ item.value }}</span>
-    </div>
-    <div class="actions">
-      <v-button>Send Messages</v-button>
-    </div>
-  </form>
+  <div>
+    <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
+      ><p>{{ error }}</p></v-notifi
+    >
+    <form @submit.prevent="submitSendMessage">
+      <div class="form-control" v-for="item of dataInputForms" :key="item.id">
+        <label :for="item.value">{{ item.label }}</label>
+        <input :type="item.type" :id="item.value" v-model.trim="contact[item.value]" />
+        <span v-if="isValid && contact[item.value] === ''" class="errors">***Please input {{ item.value }}</span>
+      </div>
+      <div class="actions">
+        <v-button>Send Messages</v-button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -59,6 +61,7 @@ export default defineComponent({
       const { email, message } = this.contact;
       if (message === "" || email === "" || !email.includes("@")) {
         this.isValid = true;
+        this.store.dispatch(GlobalsAction.SET_ERROR, "please input available!");
         return;
       } else {
         this.isValid = false;

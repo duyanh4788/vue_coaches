@@ -26,6 +26,9 @@ export const handleApi = async (type: string, data: any, nameSpace: string, comm
         break;
     }
     result = configResponse(result as AxiosResponse);
+    // if (nameSpace === "coaches" && type === TypeRequest.POST) {
+    //   throw new Error("Test Notifi CSS");
+    // }
     commit(GlobalsAction.SET_LOADING, false);
     commit(GlobalsAction.SET_SUCCESS, { key, status: true });
     return result;

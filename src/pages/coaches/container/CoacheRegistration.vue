@@ -1,13 +1,15 @@
 <template>
-  <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
-    ><p>{{ error }}</p></v-notifi
-  >
-  <section>
-    <v-card>
-      <h2>Register</h2>
-      <coache-form @save-data="saveData" :reset-form="resetFrom"></coache-form>
-    </v-card>
-  </section>
+  <div>
+    <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
+      ><p>{{ error }}</p></v-notifi
+    >
+    <section>
+      <v-card>
+        <h2>Register</h2>
+        <coache-form @save-data="saveData"></coache-form>
+      </v-card>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,6 +20,7 @@ import { useStore } from "stores/store";
 import { CoachesAction } from "stores/modules/coaches/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { useRouter } from "vue-router";
+import { inputReg } from "common/extend";
 
 export default defineComponent({
   components: {
@@ -27,7 +30,11 @@ export default defineComponent({
     const store = useStore();
     const router = useRouter();
 
-    const resetFrom = () => {};
+    const resetFrom = () => {
+      for (let key in inputReg) {
+        inputReg[key] = "";
+      }
+    };
     watch(
       () => store.getters.getSuccess,
       (newVal) => {
@@ -39,7 +46,7 @@ export default defineComponent({
       }
     );
     const error = computed(() => store.getters.getError);
-    return { store, error, resetFrom };
+    return { store, error };
   },
   methods: {
     saveData(data: Coache) {

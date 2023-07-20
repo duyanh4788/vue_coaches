@@ -1,51 +1,74 @@
 @import "./variable/index.scss";
 
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    color-scheme: light dark;
-    color: $color-gray;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: $color-gray;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
-    touch-action: manipulation;
-    -webkit-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    text-size-adjust: none;
-    scroll-behavior: smooth;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+  scroll-behavior: smooth;
 }
 
 body {
-    margin: 0;
-    min-height: 100vh;
-    background-color: $background-body-1;
+  margin: 0;
+  min-height: 100vh;
+  background-color: $background-body-1;
 }
 
 body::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background-color: $background-body-2;
+  width: 6px;
+  height: 6px;
+  background-color: $background-body-2;
 }
 body::-webkit-scrollbar-thumb {
-    background: $background-body-1;
-    border-radius: 6px;
-    border: $border3;
-    box-shadow: $box-shadow;
+  background: $background-body-1;
+  border-radius: 6px;
+  border: $border3;
+  box-shadow: $box-shadow;
 }
 
 section {
-    margin: 20px;
+  margin: 20px;
+}
+
+.route-enter-from {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+.route-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.route-enter-active {
+  transition: all 0.2s ease-out;
+}
+
+.route-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.route-enter-to,
+.route-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -1,15 +1,17 @@
 <template>
-  <section>
-    <v-card>
-      <header>
-        <h2>Request Received</h2>
-      </header>
-      <ul v-if="requests.length">
-        <request-item v-for="item of requests" :key="item.id" :email="item.email" :message="item.message">{{ item.email }}</request-item>
-      </ul>
-      <h3 v-else>You haven't received any requests yet!</h3>
-    </v-card>
-  </section>
+  <div>
+    <section>
+      <v-card>
+        <header>
+          <h2>Request Received</h2>
+        </header>
+        <ul v-if="requests.length">
+          <request-item v-for="item of requests" :key="item.id" :email="item.email" :message="item.message">{{ item.email }}</request-item>
+        </ul>
+        <h3 v-else>You haven't received any requests yet!</h3>
+      </v-card>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">

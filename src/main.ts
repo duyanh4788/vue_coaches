@@ -20,6 +20,4 @@ app.component("v-button", VButton);
 app.component("v-loading", VLoading);
 app.component("v-notifi", VNotifi);
 
-routers.isReady().then(() => {
-  app.mount("#app");
-});
+app.mount("#app");

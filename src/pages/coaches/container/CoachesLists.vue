@@ -1,21 +1,23 @@
 <template>
-  <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
-    ><p>{{ error }}</p></v-notifi
-  >
-  <section><coache-filter @change-filter="setFilter"></coache-filter></section>
-  <section>
-    <v-card>
-      <div class="controls">
-        <v-button mode="outline" @click="refeshCoaches">Refresh</v-button>
-        <v-button link to="/register">Register a Coach </v-button>
-      </div>
-      <div v-if="isLoading"><v-loading></v-loading></div>
-      <ul v-if="validateCoaches">
-        <coache-item v-for="item of getCoaches" :key="item.id" :coache="item"></coache-item>
-      </ul>
-      <h3 v-else>No Data</h3>
-    </v-card>
-  </section>
+  <div>
+    <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
+      ><p>{{ error }}</p></v-notifi
+    >
+    <section><coache-filter @change-filter="setFilter"></coache-filter></section>
+    <section>
+      <v-card>
+        <div class="controls">
+          <v-button mode="outline" @click="refeshCoaches">Refresh</v-button>
+          <v-button link to="/register">Register a Coach </v-button>
+        </div>
+        <div v-if="isLoading"><v-loading></v-loading></div>
+        <ul v-if="validateCoaches">
+          <coache-item v-for="item of getCoaches" :key="item.id" :coache="item"></coache-item>
+        </ul>
+        <h3 v-else>No Data</h3>
+      </v-card>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
