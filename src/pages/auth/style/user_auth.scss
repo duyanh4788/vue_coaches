@@ -1,0 +1,44 @@
+@import "src/styles/variable/index.scss";
+
+form {
+  margin: 1rem;
+  padding: 1rem;
+}
+
+.form-control {
+  margin: 0.5rem 0;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  font: inherit;
+  border: $border1;
+  padding: 0.15rem;
+}
+
+input:focus,
+textarea:focus {
+  border-color: $color-green;
+  background-color: $background-body-1;
+  outline: none;
+}
+
+.errors {
+  color: $color-red;
+  font-size: 13px;
+}
+
+.actions {
+  text-align: center;
+}
+button {
+  margin-top: 20px;
+}

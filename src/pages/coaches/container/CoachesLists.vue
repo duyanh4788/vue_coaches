@@ -1,8 +1,5 @@
 <template>
   <div>
-    <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
-      ><p>{{ error }}</p></v-notifi
-    >
     <section><coache-filter @change-filter="setFilter"></coache-filter></section>
     <section>
       <v-card>
@@ -10,7 +7,6 @@
           <v-button mode="outline" @click="refeshCoaches">Refresh</v-button>
           <v-button link to="/register">Register a Coach </v-button>
         </div>
-        <div v-if="isLoading"><v-loading></v-loading></div>
         <ul v-if="validateCoaches">
           <coache-item v-for="item of getCoaches" :key="item.id" :coache="item"></coache-item>
         </ul>
@@ -22,7 +18,7 @@
 
 <script lang="ts">
 import { useStore } from "stores/store";
-import { computed, defineComponent } from "vue";
+import { defineComponent } from "vue";
 import CoacheItem from "../components/CoacheItem.vue";
 import CoacheFilter from "../components/CoacheFilter.vue";
 import { Coache } from "stores/modules/coaches/state";
@@ -36,13 +32,9 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const isLoading = computed(() => store.getters.getLoading);
-    const error = computed(() => store.getters.getError);
     store.dispatch(CoachesAction.GET_COACHES);
     return {
       store,
-      isLoading,
-      error,
     };
   },
   computed: {

@@ -10,7 +10,6 @@ type AugmentedActionContext = {
 } & Omit<ActionContext<Requests, RootState>, "commit">;
 
 export enum RequestsAction {
-  ADD_REQUEST = "ADD_REQUEST",
   CONTACT_COACH = "CONTACT_COACH",
   FIND_REQUEST_BY_COACHEID = "FIND_REQUEST_BY_COACHEID",
 }

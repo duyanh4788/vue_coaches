@@ -5,6 +5,7 @@ import ContactCoach from "pages/request/container/ContactCoach.vue";
 import CoacheRegistration from "pages/coaches/container/CoacheRegistration.vue";
 import RequestRecived from "pages/request/container/RequestRecived.vue";
 import NotFound from "pages/notfound/NotFound.vue";
+import UserAuth from "pages/auth/container/UserAuth.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/", redirect: "/coaches" },
@@ -18,6 +19,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   { path: "/register", component: CoacheRegistration },
   { path: "/requests/:coacheId", props: true, component: RequestRecived },
+  { path: "/auth", component: UserAuth },
   { path: "/:notFound(.*)", component: NotFound },
 ];
 

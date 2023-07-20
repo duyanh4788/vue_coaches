@@ -58,4 +58,5 @@ export const inputForm: any = {
 export enum StateStore {
   COACHES = "coaches",
   REQUEST = "requests",
+  AUTH = "auth",
 }

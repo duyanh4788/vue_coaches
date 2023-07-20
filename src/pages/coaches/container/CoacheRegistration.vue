@@ -1,8 +1,5 @@
 <template>
   <div>
-    <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
-      ><p>{{ error }}</p></v-notifi
-    >
     <section>
       <v-card>
         <h2>Register</h2>
@@ -13,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch } from "vue";
+import { defineComponent, watch } from "vue";
 import CoacheForm from "../components/CoacheForm.vue";
 import { Coache } from "stores/modules/coaches/state";
 import { useStore } from "stores/store";
@@ -45,15 +42,11 @@ export default defineComponent({
         }
       }
     );
-    const error = computed(() => store.getters.getError);
-    return { store, error };
+    return { store };
   },
   methods: {
     saveData(data: Coache) {
       this.store.dispatch(CoachesAction.REFGISTER_COACHE, data);
-    },
-    clearError() {
-      this.store.dispatch(GlobalsAction.SET_ERROR);
     },
   },
   unmounted() {

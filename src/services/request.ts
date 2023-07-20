@@ -8,19 +8,22 @@ export enum TypeRequest {
   PUT = "PUT",
 }
 
-export const handleApi = async (type: string, data: any, nameSpace: string, commit: Commit, key: string) => {
+export const API_AUTH_SIGNUP = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDB0mWIRE9qmPwrHC8bE7GxZ0J2UIXEzi8";
+export const API_AUTH_SIGNIN = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDB0mWIRE9qmPwrHC8bE7GxZ0J2UIXEzi8";
+
+export const handleApi = async (type: string, data: any, nameSpace: string, commit: Commit, key: string, apiAuth?: string) => {
   try {
     commit(GlobalsAction.SET_LOADING, true);
     let result: any;
     switch (type) {
       case TypeRequest.POST:
-        result = await httpRequest(nameSpace).post("", data);
+        result = await httpRequest(nameSpace, apiAuth).post("", JSON.stringify(data));
         break;
       case TypeRequest.GET:
-        result = await httpRequest(nameSpace).get("");
+        result = await httpRequest(nameSpace, apiAuth).get("");
         break;
       case TypeRequest.PUT:
-        result = await httpRequest(nameSpace).put("", data);
+        result = await httpRequest(nameSpace, apiAuth).put("", data);
         break;
       default:
         break;
@@ -34,20 +37,18 @@ export const handleApi = async (type: string, data: any, nameSpace: string, comm
     return result;
   } catch (error: any) {
     commit(GlobalsAction.SET_LOADING, false);
-    commit(GlobalsAction.SET_ERROR, error.message);
-    throw configResponseError(error);
+    const err = configResponseError(error);
+    commit(GlobalsAction.SET_ERROR, err.message);
+    throw err;
   }
 };
 
-const httpRequest = (nameSpace: string) => {
+const httpRequest = (nameSpace: string, apiAuth?: string) => {
   const request: AxiosInstance = axios.create({
-    baseURL: `https://fir-vue-ab758-default-rtdb.asia-southeast1.firebasedatabase.app/${nameSpace}.json`,
+    baseURL: apiAuth ? apiAuth : `https://fir-vue-ab758-default-rtdb.asia-southeast1.firebasedatabase.app/${nameSpace}.json`,
     headers: {
-      "Cache-Control": "no-cache",
-      "Access-Control-Allow-Origin": "***",
-      Accept: "*/*",
+      "Content-Type": "application/json",
     },
-    timeout: 25000,
   });
   return request;
 };
@@ -70,7 +71,7 @@ function configResponseError(errors: AxiosError | any): any {
   if (!errors || !errors.response || !errors.response.data) {
     return { message: "request server not found", code: 404 };
   }
-  return { message: errors.message };
+  return { message: errors.response.data.error.message ? errors.response.data.error.message : errors.message };
   const { code, message, success, status } = errors.response.data;
   if (!message && code) {
     return { code, message: "request server not found", status };
