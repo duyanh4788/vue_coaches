@@ -1,0 +1,18 @@
+@import "../variable/index.scss";
+
+@mixin flex_jc_sp {
+    display: flex;
+    justify-content: space-between;
+}
+
+@mixin flex_jc_sp_ai_c {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@mixin flex_jc_ct_ai_c {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

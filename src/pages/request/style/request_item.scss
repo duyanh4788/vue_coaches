@@ -1,0 +1,21 @@
+@import "src/styles/variable/index.scss";
+li {
+  margin: 1rem 0;
+  border: $border1;
+  padding: 1rem;
+}
+
+a {
+  color: $color-btn;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover,
+a:active {
+  color: $color-btn_mode1;
+}
+
+p {
+  margin: 0.5rem 0 0 0;
+}

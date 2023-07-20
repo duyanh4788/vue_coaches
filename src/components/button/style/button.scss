@@ -1,0 +1,42 @@
+@import "src/styles/variable/index.scss";
+
+button,
+a {
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    font: inherit;
+    background-color: $color-btn;
+    border: $border2;
+    color: $color-white;
+    cursor: pointer;
+    border-radius: 30px;
+    margin-right: 0.5rem;
+    display: inline-block;
+}
+
+a:hover,
+a:active,
+button:hover,
+button:active {
+    background-color: $color-btn_mode1;
+    border-color: $color-btn_mode1;
+}
+
+.flat {
+    background-color: transparent;
+    color: $color-gray;
+    border: none;
+}
+
+.outline {
+    background-color: transparent;
+    border-color: $color-btn_mode1;
+    color: $color-btn_mode1;
+}
+
+.flat:hover,
+.flat:active,
+.outline:hover,
+.outline:active {
+    background-color: $color-btn_mode2;
+}
