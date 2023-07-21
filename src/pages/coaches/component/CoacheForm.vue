@@ -44,13 +44,15 @@ export default defineComponent({
     const isValidate = ref<boolean>(false);
 
     const clearErr = (key: string) => {
-      if (key === "rate") {
+      if (key === "rate" && coache.value[key]) {
         delete validCoache.value.validRate;
       }
-      if (key === "validAreas") {
+      if (key === "validAreas" && coache.value.areas && coache.value.areas.length) {
         delete validCoache.value.validAreas;
       }
-      validCoache.value[key] = "";
+      if ((key !== "rate" && coache.value[key]) || (key !== "validAreas" && coache.value[key])) {
+        validCoache.value[key] = "";
+      }
     };
 
     const validateForm = () => {
@@ -63,16 +65,14 @@ export default defineComponent({
         isValidate.value = false;
       }
       for (let key in coache.value) {
-        if (coache.value[key] === "" || !coache.value?.rate) {
-          if (key !== "rate") {
-            validCoache.value[key] = `***Please input ${key}`;
-            isValidate.value = true;
-          }
-          if (key === "rate") {
-            const validRate = `***Please input rate`;
-            validCoache.value = { ...validCoache.value, validRate };
-            isValidate.value = true;
-          }
+        if (key !== "rate" && coache.value[key] === "") {
+          validCoache.value[key] = `***Please input ${key}`;
+          isValidate.value = true;
+        }
+        if (key === "rate" && !coache.value?.rate) {
+          const validRate = `***Please input rate`;
+          validCoache.value = { ...validCoache.value, validRate };
+          isValidate.value = true;
         }
       }
       const isCheckedCoache = AppHelper.hasEmptyValues(coache.value);
