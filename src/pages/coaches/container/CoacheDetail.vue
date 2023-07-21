@@ -28,10 +28,13 @@
 import { useRouter } from "vue-router";
 import { Coache } from "stores/modules/coaches/state";
 import { useStore } from "stores/store";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onUnmounted } from "vue";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { CoachesAction } from "stores/modules/coaches/actions";
 
+interface Props {
+  id: string;
+}
 export default defineComponent({
   props: {
     id: {
@@ -39,7 +42,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const router = useRouter();
     if (!props.id) {
       router.go(-1);
@@ -53,11 +56,12 @@ export default defineComponent({
     });
     const fullName = computed(() => coache.value?.firstName + " " + coache.value?.lastName);
     const contactLink = computed(() => `/coaches/${props.id}/contact`);
+
+    onUnmounted(() => {
+      store.dispatch(GlobalsAction.SET_SUCCESS, false);
+      store.dispatch(GlobalsAction.SET_ERROR, null);
+    });
     return { store, coache, fullName, contactLink };
-  },
-  unmounted() {
-    this.store.dispatch(GlobalsAction.SET_SUCCESS, false);
-    this.store.dispatch(GlobalsAction.SET_ERROR, null);
   },
 });
 </script>

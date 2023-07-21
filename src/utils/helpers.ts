@@ -22,6 +22,26 @@ export class AppHelper {
     return true;
   }
 
+  static hasEmptyValues(obj: any): boolean {
+    for (const key in obj) {
+      if (
+        (typeof obj[key] === "string" && obj[key] === "") ||
+        (typeof obj[key] === "number" && obj[key] === 0) ||
+        (Array.isArray(obj[key]) && obj[key].length === 0)
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static clearEmtyInObject(obj: any) {
+    for (const key in obj) {
+      obj[key] = "";
+    }
+    return;
+  }
+
   static capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }

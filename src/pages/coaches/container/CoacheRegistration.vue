@@ -10,14 +10,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from "vue";
-import CoacheForm from "../components/CoacheForm.vue";
+import { defineComponent, onUnmounted, watch } from "vue";
+import CoacheForm from "../component/CoacheForm.vue";
 import { Coache } from "stores/modules/coaches/state";
 import { useStore } from "stores/store";
 import { CoachesAction } from "stores/modules/coaches/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { useRouter } from "vue-router";
 import { inputReg } from "common/extend";
+import { AppHelper } from "utils/helpers";
 
 export default defineComponent({
   components: {
@@ -28,10 +29,13 @@ export default defineComponent({
     const router = useRouter();
 
     const resetFrom = () => {
-      for (let key in inputReg) {
-        inputReg[key] = "";
-      }
+      AppHelper.clearEmtyInObject(inputReg);
     };
+
+    const saveData = (data: Coache) => {
+      store.dispatch(CoachesAction.REFGISTER_COACHE, data);
+    };
+
     watch(
       () => store.getters.getSuccess,
       (newVal) => {
@@ -42,16 +46,12 @@ export default defineComponent({
         }
       }
     );
-    return { store };
-  },
-  methods: {
-    saveData(data: Coache) {
-      this.store.dispatch(CoachesAction.REFGISTER_COACHE, data);
-    },
-  },
-  unmounted() {
-    this.store.dispatch(GlobalsAction.SET_SUCCESS, null);
-    this.store.dispatch(GlobalsAction.SET_ERROR, null);
+
+    onUnmounted(() => {
+      store.dispatch(GlobalsAction.SET_SUCCESS, null);
+      store.dispatch(GlobalsAction.SET_ERROR, null);
+    });
+    return { store, saveData };
   },
 });
 </script>

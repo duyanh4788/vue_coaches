@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "vue";
+import { computed, defineComponent, onUnmounted, ref, watch } from "vue";
 import { useStore } from "stores/store";
 import { AuthAction } from "stores/modules/auth/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
@@ -49,35 +49,38 @@ export default defineComponent({
     const typeChange = computed(() => {
       return mode.value === "signup" ? "Login instead" : "Signup instead";
     });
-    return { auth, store, typeAuth, typeChange, mode, userInfor };
-  },
-  methods: {
-    submitLogin() {
-      const { email, password } = this.auth;
+
+    onUnmounted(() => {
+      store.dispatch(GlobalsAction.SET_SUCCESS, false);
+      store.dispatch(GlobalsAction.SET_ERROR, null);
+    });
+
+    const submitLogin = () => {
+      const { email, password } = auth.value;
       if (password === "" || email === "" || !email.includes("@")) {
-        this.auth.isValid = true;
+        auth.value.isValid = true;
         return;
       } else {
-        this.auth.isValid = false;
-        const payload = { email: this.auth.email, password: this.auth.password, returnSecureToken: true };
-        if (this.mode === "login") {
-          this.store.dispatch(AuthAction.LOGIN, payload);
+        auth.value.isValid = false;
+        const payload = { email: auth.value.email, password: auth.value.password, returnSecureToken: true };
+        if (mode.value === "login") {
+          store.dispatch(AuthAction.LOGIN, payload);
         }
-        if (this.mode === "signup") {
-          this.store.dispatch(AuthAction.SINGUP, payload);
+        if (mode.value === "signup") {
+          store.dispatch(AuthAction.SINGUP, payload);
         }
       }
-    },
-    changeType(value: string) {
-      this.mode = value === "signup" && this.mode === "signup" ? "login" : "signup";
-    },
-    clearError() {
-      this.store.dispatch(GlobalsAction.SET_ERROR);
-    },
-  },
-  unmounted() {
-    this.store.dispatch(GlobalsAction.SET_SUCCESS, false);
-    this.store.dispatch(GlobalsAction.SET_ERROR, null);
+    };
+
+    const changeType = (value: string) => {
+      mode.value = value === "signup" && mode.value === "signup" ? "login" : "signup";
+    };
+
+    const clearError = () => {
+      store.dispatch(GlobalsAction.SET_ERROR);
+    };
+
+    return { auth, store, typeAuth, typeChange, mode, userInfor, submitLogin, changeType, clearError };
   },
 });
 </script>

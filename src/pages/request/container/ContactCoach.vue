@@ -21,13 +21,14 @@ import { inputForm, inputForms } from "common/extend";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { RequestsAction } from "stores/modules/requests/actions";
 import { useStore } from "stores/store";
-import { computed, defineComponent, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { computed, defineComponent, onUnmounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
+    const route = useRoute();
 
     const dataInputForms = ref(inputForms);
 
@@ -53,32 +54,32 @@ export default defineComponent({
 
     const error = computed(() => store.getters.getError);
 
-    return { store, error, dataInputForms, contact, isValid, resetData };
-  },
+    onUnmounted(() => {
+      store.dispatch(GlobalsAction.SET_SUCCESS, false);
+      store.dispatch(GlobalsAction.SET_ERROR, null);
+      resetData();
+    });
 
-  methods: {
-    submitSendMessage() {
-      const { email, message } = this.contact;
+    const submitSendMessage = () => {
+      const { email, message } = contact.value;
       if (message === "" || email === "" || !email.includes("@")) {
-        this.isValid = true;
-        this.store.dispatch(GlobalsAction.SET_ERROR, "please input available!");
+        isValid.value = true;
+        store.dispatch(GlobalsAction.SET_ERROR, "please input available!");
         return;
       } else {
-        this.isValid = false;
-        this.store.dispatch(RequestsAction.CONTACT_COACH, {
-          ...this.contact,
-          coachId: this.$route.params.id,
+        isValid.value = false;
+        store.dispatch(RequestsAction.CONTACT_COACH, {
+          ...contact,
+          coachId: route.params.id,
         });
       }
-    },
-    clearError() {
-      this.store.dispatch(GlobalsAction.SET_ERROR);
-    },
-  },
-  unmounted() {
-    this.store.dispatch(GlobalsAction.SET_SUCCESS, false);
-    this.store.dispatch(GlobalsAction.SET_ERROR, null);
-    this.resetData();
+    };
+
+    const clearError = () => {
+      store.dispatch(GlobalsAction.SET_ERROR);
+    };
+
+    return { store, error, dataInputForms, contact, isValid, resetData, submitSendMessage, clearError };
   },
 });
 </script>

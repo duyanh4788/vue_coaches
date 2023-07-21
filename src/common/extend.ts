@@ -1,6 +1,6 @@
 import { Coache } from "stores/modules/coaches/state";
 
-interface InputInterface {
+export interface InputInterface {
   id: string;
   value: string;
   label: string;
@@ -19,14 +19,14 @@ export const inputRegs: InputInterface[] = [
   { id: "rate", value: "rate", label: "Rating", type: "number" },
 ];
 
-interface ListArea {
+export interface ListAreaExtend {
   id: string;
   value: string;
   label: string;
   checked: boolean;
 }
 
-export const listAreas: ListArea[] = [
+export const listAreasExtend: ListAreaExtend[] = [
   {
     id: "frontend",
     value: "frontend",

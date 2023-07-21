@@ -18,6 +18,10 @@
 import { Coache } from "stores/modules/coaches/state";
 import { PropType, computed, defineComponent, toRefs } from "vue";
 
+interface Props {
+  coache: Coache;
+}
+
 export default defineComponent({
   props: {
     coache: {
@@ -25,7 +29,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup(props: Props) {
     const { coache } = toRefs(props);
     const fullName = computed(() => coache.value.firstName + " " + coache.value.lastName);
     const detailLink = computed(() => "coaches/" + coache.value.id);

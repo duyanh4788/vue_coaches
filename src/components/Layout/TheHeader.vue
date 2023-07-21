@@ -25,13 +25,12 @@ export default defineComponent({
     const router = useRouter();
     const store = useStore();
     const isAuth = computed(() => store.getters.getAuth);
-    return { isAuth, router, store };
-  },
-  methods: {
-    logout() {
-      this.store.dispatch(AuthAction.LOG_OUT);
-      this.router.replace("/auth");
-    },
+
+    const logout = () => {
+      store.dispatch(AuthAction.LOG_OUT);
+      router.replace("/auth");
+    };
+    return { isAuth, router, store, logout };
   },
 });
 </script>

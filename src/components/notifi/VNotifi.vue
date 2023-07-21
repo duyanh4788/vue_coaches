@@ -22,9 +22,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { KeyEmit } from "common/keyemit";
+import { SetupContext, defineComponent } from "vue";
+
+interface Props {
+  show: boolean;
+  title?: string;
+  fixed?: boolean;
+}
 
 export default defineComponent({
+  emits: [KeyEmit.CLOSE],
   props: {
     show: {
       type: Boolean,
@@ -40,14 +48,15 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ["close"],
-  methods: {
-    tryClose() {
-      if (this.fixed) {
+  setup(props: Props, ctx: SetupContext) {
+    const tryClose = () => {
+      if (props.fixed) {
         return;
       }
-      this.$emit("close");
-    },
+      ctx.emit(KeyEmit.CLOSE);
+    };
+
+    return { tryClose };
   },
 });
 </script>

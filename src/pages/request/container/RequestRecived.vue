@@ -17,8 +17,8 @@
 <script lang="ts">
 import { Request } from "stores/modules/requests/state";
 import { useStore } from "stores/store";
-import { computed, defineComponent } from "vue";
-import RequestItem from "../components/RequestItem.vue";
+import { computed, defineComponent, onUnmounted } from "vue";
+import RequestItem from "../component/RequestItem.vue";
 import { RequestsAction } from "stores/modules/requests/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
 
@@ -36,14 +36,15 @@ export default defineComponent({
     const store = useStore();
     store.dispatch(RequestsAction.FIND_REQUEST_BY_COACHEID, props.coacheId);
     const requests = computed<Request[]>(() => store.getters.getRequest);
+
+    onUnmounted(() => {
+      store.dispatch(GlobalsAction.SET_SUCCESS, false);
+      store.dispatch(GlobalsAction.SET_ERROR, null);
+    });
     return {
       store,
       requests,
     };
-  },
-  unmounted() {
-    this.store.dispatch(GlobalsAction.SET_SUCCESS, false);
-    this.store.dispatch(GlobalsAction.SET_ERROR, null);
   },
 });
 </script>

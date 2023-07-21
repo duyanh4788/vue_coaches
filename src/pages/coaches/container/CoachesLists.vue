@@ -18,9 +18,9 @@
 
 <script lang="ts">
 import { useStore } from "stores/store";
-import { defineComponent } from "vue";
-import CoacheItem from "../components/CoacheItem.vue";
-import CoacheFilter from "../components/CoacheFilter.vue";
+import { computed, defineComponent, onUnmounted, ref } from "vue";
+import CoacheItem from "../component/CoacheItem.vue";
+import CoacheFilter from "../component/CoacheFilter.vue";
 import { Coache } from "stores/modules/coaches/state";
 import { CoachesAction } from "stores/modules/coaches/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
@@ -33,53 +33,54 @@ export default defineComponent({
   setup() {
     const store = useStore();
     store.dispatch(CoachesAction.GET_COACHES);
-    return {
-      store,
-    };
-  },
-  computed: {
-    getCoaches() {
-      const coaches = this.store.getters.getCoaches;
-      return coaches.filter((item: Coache) => {
-        if (this.activeFilter.frontend && item.areas?.length && item.areas.includes("frontend")) {
+    const validateCoaches = computed<boolean>(() => store.getters.validateCoaches);
+    const coaches = computed<Coache[]>(() => store.getters.getCoaches);
+
+    const getCoaches = computed<Coache[]>(() => {
+      return coaches.value.filter((item: Coache) => {
+        if (activeFilter.value.frontend && item.areas?.length && item.areas.includes("frontend")) {
           return true;
         }
-        if (this.activeFilter.backend && item.areas?.length && item.areas.includes("backend")) {
+        if (activeFilter.value.backend && item.areas?.length && item.areas.includes("backend")) {
           return true;
         }
-        if (this.activeFilter.career && item.areas?.length && item.areas.includes("career")) {
+        if (activeFilter.value.career && item.areas?.length && item.areas.includes("career")) {
           return true;
         }
         return false;
       });
-    },
-    validateCoaches() {
-      return this.store.getters.validateCoaches;
-    },
-  },
-  data() {
-    return {
-      activeFilter: {
-        frontend: true,
-        backend: true,
-        career: true,
-      },
+    });
+
+    const activeFilter = ref({
+      frontend: true,
+      backend: true,
+      career: true,
+    });
+
+    onUnmounted(() => {
+      store.dispatch(GlobalsAction.SET_SUCCESS, false);
+      store.dispatch(GlobalsAction.SET_ERROR, null);
+    });
+
+    const setFilter = (filter: any) => {
+      activeFilter.value = { ...activeFilter.value, ...filter };
     };
-  },
-  methods: {
-    setFilter(filter: any) {
-      this.activeFilter = { ...this.activeFilter, ...filter };
-    },
-    refeshCoaches() {
-      this.store.dispatch(CoachesAction.GET_COACHES, true);
-    },
-    clearError() {
-      this.store.dispatch(GlobalsAction.SET_ERROR);
-    },
-  },
-  unmounted() {
-    this.store.dispatch(GlobalsAction.SET_SUCCESS, false);
-    this.store.dispatch(GlobalsAction.SET_ERROR, null);
+    const refeshCoaches = () => {
+      store.dispatch(CoachesAction.GET_COACHES, true);
+    };
+    const clearError = () => {
+      store.dispatch(GlobalsAction.SET_ERROR);
+    };
+
+    return {
+      store,
+      validateCoaches,
+      getCoaches,
+      activeFilter,
+      setFilter,
+      refeshCoaches,
+      clearError,
+    };
   },
 });
 </script>
