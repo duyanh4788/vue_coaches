@@ -19,6 +19,7 @@ import { GlobalsAction } from "stores/modules/globals/actions";
 import { useRouter } from "vue-router";
 import { inputReg } from "common/extend";
 import { AppHelper } from "utils/helpers";
+import { NameRouter } from "routers/routers";
 
 export default defineComponent({
   components: {
@@ -41,7 +42,7 @@ export default defineComponent({
       (newVal) => {
         if (!newVal) return;
         if (newVal && newVal.key === CoachesAction.REFGISTER_COACHE) {
-          router.replace("/coaches");
+          router.replace(NameRouter.COACHES);
           resetFrom();
         }
       }

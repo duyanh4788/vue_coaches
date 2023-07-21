@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts">
+import { NameRouter } from "routers/routers";
 import { AuthAction } from "stores/modules/auth/actions";
 import { useStore } from "stores/store";
 import { computed, defineComponent } from "vue";
@@ -28,7 +29,7 @@ export default defineComponent({
 
     const logout = () => {
       store.dispatch(AuthAction.LOG_OUT);
-      router.replace("/auth");
+      router.replace(NameRouter.AUTH);
     };
     return { isAuth, router, store, logout };
   },

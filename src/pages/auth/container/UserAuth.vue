@@ -23,6 +23,7 @@ import { AuthAction } from "stores/modules/auth/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { UserInfor } from "stores/modules/auth/state";
 import { useRouter } from "vue-router";
+import { NameRouter } from "routers/routers";
 
 export default defineComponent({
   setup() {
@@ -33,7 +34,7 @@ export default defineComponent({
 
     watch(userInfor, (newVal) => {
       if (newVal) {
-        router.replace("/coaches");
+        router.replace(NameRouter.COACHES);
       }
     });
 

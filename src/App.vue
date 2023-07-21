@@ -17,6 +17,7 @@ import TheHeader from "components/Layout/TheHeader.vue";
 import { useStore } from "stores/store";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { useRouter } from "vue-router";
+import { NameRouter } from "routers/routers";
 
 export default defineComponent({
   components: {
@@ -28,10 +29,9 @@ export default defineComponent({
     const isLoading = computed(() => store.getters.getLoading);
     const error = computed(() => store.getters.getError);
     const isAuth = computed(() => store.getters.getAuth);
-
     watch(isAuth, (newVal) => {
       if (!newVal) {
-        router.replace("/auth");
+        router.replace(NameRouter.AUTH);
       }
     });
     const clearError = () => {

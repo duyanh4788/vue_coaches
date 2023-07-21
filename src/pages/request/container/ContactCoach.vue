@@ -3,6 +3,7 @@
     <v-notifi :show="!!error" title="An error occurred!" @close="clearError"
       ><p>{{ error }}</p></v-notifi
     >
+    <div v-if="isLoading"><v-loading></v-loading></div>
     <form @submit.prevent="submitSendMessage">
       <div class="form-control" v-for="item of dataInputForms" :key="item.id">
         <label :for="item.value">{{ item.label }}</label>
@@ -18,6 +19,7 @@
 
 <script lang="ts">
 import { inputForm, inputForms } from "common/extend";
+import { NameRouter } from "routers/routers";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { RequestsAction } from "stores/modules/requests/actions";
 import { useStore } from "stores/store";
@@ -29,6 +31,7 @@ export default defineComponent({
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
+    const isLoading = computed(() => store.getters.getLoading);
 
     const dataInputForms = ref(inputForms);
 
@@ -47,7 +50,7 @@ export default defineComponent({
         if (!newVal) return;
         if (newVal && newVal.key === RequestsAction.CONTACT_COACH) {
           resetData();
-          router.replace("/coaches");
+          router.replace(NameRouter.COACHES);
         }
       }
     );
@@ -79,7 +82,7 @@ export default defineComponent({
       store.dispatch(GlobalsAction.SET_ERROR);
     };
 
-    return { store, error, dataInputForms, contact, isValid, resetData, submitSendMessage, clearError };
+    return { store, error, isLoading, dataInputForms, contact, isValid, resetData, submitSendMessage, clearError };
   },
 });
 </script>

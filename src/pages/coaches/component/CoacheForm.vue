@@ -1,29 +1,32 @@
 <template>
-  <form @submit.prevent="submitForm">
-    <div v-for="item of renderInputRegs" :key="item.id" :class="['form-control', { invalid: isInvalid(item.value) }]">
-      <label :for="item.value">{{ item.label }}</label>
-      <textarea v-if="item.id === 'description'" :id="item.id" rows="5" v-model.trim="coache[item.value]" @blur="clearErr(item.value)"></textarea>
-      <input v-else :type="item.type" :id="item.id" v-model.trim="coache[item.value]" @blur="clearErr(item.value)" />
-      <span v-if="validCoache[item.value] !== '' && item.value !== 'rate'">{{ validCoache[item.value] }}</span>
-      <span v-if="item.value === 'rate' && validCoache.validRate">{{ validCoache.validRate }}</span>
-    </div>
-    <div
-      :class="[
-        'form-control',
-        {
-          invalid: validCoache.validAreas && validCoache.validAreas !== '',
-        },
-      ]"
-    >
-      <h3>Area of Expertise</h3>
-      <div v-for="item of listAreas" :key="item.id">
-        <input type="checkbox" :id="item.id" :value="item.value" v-model="coache.areas" @blur="clearErr('validAreas')" />
+  <div>
+    <div v-if="isLoading"><v-loading></v-loading></div>
+    <form @submit.prevent="submitForm">
+      <div v-for="item of renderInputRegs" :key="item.id" :class="['form-control', { invalid: isInvalid(item.value) }]">
         <label :for="item.value">{{ item.label }}</label>
+        <textarea v-if="item.id === 'description'" :id="item.id" rows="5" v-model.trim="coache[item.value]" @blur="clearErr(item.value)"></textarea>
+        <input v-else :type="item.type" :id="item.id" v-model.trim="coache[item.value]" @blur="clearErr(item.value)" />
+        <span v-if="validCoache[item.value] !== '' && item.value !== 'rate'">{{ validCoache[item.value] }}</span>
+        <span v-if="item.value === 'rate' && validCoache.validRate">{{ validCoache.validRate }}</span>
       </div>
-      <span v-if="validCoache.validAreas !== ''">{{ validCoache.validAreas }}</span>
-    </div>
-    <v-button>Register</v-button>
-  </form>
+      <div
+        :class="[
+          'form-control',
+          {
+            invalid: validCoache.validAreas && validCoache.validAreas !== '',
+          },
+        ]"
+      >
+        <h3>Area of Expertise</h3>
+        <div v-for="item of listAreas" :key="item.id">
+          <input type="checkbox" :id="item.id" :value="item.value" v-model="coache.areas" @blur="clearErr('validAreas')" />
+          <label :for="item.value">{{ item.label }}</label>
+        </div>
+        <span v-if="validCoache.validAreas !== ''">{{ validCoache.validAreas }}</span>
+      </div>
+      <v-button>Register</v-button>
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -33,10 +36,13 @@ import { Coache } from "stores/modules/coaches/state";
 import { SetupContext, computed, defineComponent, ref } from "vue";
 import { AppHelper } from "utils/helpers";
 import { KeyEmit } from "common/keyemit";
+import { useStore } from "stores/store";
 
 export default defineComponent({
   emits: [KeyEmit.SAVE_DATA],
   setup(_, ctx: SetupContext) {
+    const store = useStore();
+    const isLoading = computed(() => store.getters.getLoading);
     const renderInputRegs = ref<InputInterface[]>(inputRegs);
     const listAreas = ref<ListAreaExtend[]>(listAreasExtend);
     const validCoache = ref<Coache>({ ...inputReg });
@@ -96,7 +102,7 @@ export default defineComponent({
       ctx.emit(KeyEmit.SAVE_DATA, coache.value);
     };
 
-    return { renderInputRegs, validCoache, listAreas, coache, isValidate, submitForm, validateForm, isInvalid, clearErr };
+    return { isLoading, renderInputRegs, validCoache, listAreas, coache, isValidate, submitForm, validateForm, isInvalid, clearErr };
   },
 });
 </script>

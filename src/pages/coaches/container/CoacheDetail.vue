@@ -31,6 +31,7 @@ import { useStore } from "stores/store";
 import { computed, defineComponent, onUnmounted } from "vue";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { CoachesAction } from "stores/modules/coaches/actions";
+import { NameRouter } from "routers/routers";
 
 interface Props {
   id: string;
@@ -52,7 +53,9 @@ export default defineComponent({
     const coache = computed(() => {
       const coaches = store.getters.getCoaches;
       if (!coaches || !coaches.length) return null;
-      return coaches.find((item: Coache) => item.id === Number(props.id)) || null;
+      const find = coaches.find((item: Coache) => item.id === Number(props.id)) || null;
+      if (!find) return router.replace(NameRouter.COACHES);
+      return find;
     });
     const fullName = computed(() => coache.value?.firstName + " " + coache.value?.lastName);
     const contactLink = computed(() => `/coaches/${props.id}/contact`);
