@@ -1,4 +1,4 @@
-import { RouteRecordRaw, Router, createRouter, createWebHistory } from "vue-router";
+import { RouteRecordRaw, Router, createRouter, createWebHashHistory } from "vue-router";
 import CoachesLists from "pages/coaches/container/CoachesLists.vue";
 import CoacheDetail from "pages/coaches/container/CoacheDetail.vue";
 import ContactCoach from "pages/request/container/ContactCoach.vue";
@@ -37,7 +37,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const routers: Router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   strict: true,
   routes,
 });

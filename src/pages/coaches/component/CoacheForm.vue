@@ -37,6 +37,7 @@ import { SetupContext, computed, defineComponent, ref } from "vue";
 import { AppHelper } from "utils/helpers";
 import { KeyEmit } from "common/keyemit";
 import { useStore } from "stores/store";
+import { onBeforeRouteLeave } from "vue-router";
 
 export default defineComponent({
   emits: [KeyEmit.SAVE_DATA],
@@ -101,6 +102,11 @@ export default defineComponent({
       if (isValidate.value) return;
       ctx.emit(KeyEmit.SAVE_DATA, coache.value);
     };
+
+    onBeforeRouteLeave((_, _2) => {
+      const answer = window.confirm("Do you really want to leave? you have unsaved changes!");
+      if (!answer) return false;
+    });
 
     return { isLoading, renderInputRegs, validCoache, listAreas, coache, isValidate, submitForm, validateForm, isInvalid, clearErr };
   },
