@@ -3,8 +3,8 @@ import { Mutations } from "./mutations";
 import { Coache, Coaches } from "./state";
 import { RootState } from "stores/rootState";
 import { TypeRequest, handleApi } from "services/request";
-import { randomeId } from "helper/ramdomId";
 import { StateStore } from "common/extend";
+import { AppHelper } from "utils/helpers";
 
 export enum CoachesAction {
   REFGISTER_COACHE = "REFGISTER_COACHE",
@@ -28,7 +28,7 @@ export const actions: ActionTree<Coaches, RootState> & Actions = {
     try {
       const payload = {
         ...data,
-        id: randomeId(),
+        id: AppHelper.randomeId(),
         hourlyRate: data.rate,
       };
       await handleApi(TypeRequest.POST, payload, StateStore.COACHES, commit, CoachesAction.REFGISTER_COACHE);

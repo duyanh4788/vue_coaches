@@ -1,6 +1,8 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { Commit } from "vuex";
 import { GlobalsAction } from "stores/modules/globals/actions";
+import { KeyLocal, TypeLocal, localStorageServices } from "./localstorage";
+import { UserInfor } from "stores/modules/auth/state";
 
 export enum TypeRequest {
   POST = "POST",
@@ -10,7 +12,13 @@ export enum TypeRequest {
 
 export const API_AUTH_SIGNUP = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDB0mWIRE9qmPwrHC8bE7GxZ0J2UIXEzi8";
 export const API_AUTH_SIGNIN = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDB0mWIRE9qmPwrHC8bE7GxZ0J2UIXEzi8";
+const API_DATA = "https://fir-vue-ab758-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
+const defineApiFireBase = (nameSpace: string, userLocal: UserInfor) => {
+  const result = API_DATA + `${nameSpace}.json`;
+  if (userLocal) return result + `?auth=${userLocal.idToken}`;
+  if (!userLocal) return result;
+};
 export const handleApi = async (type: string, data: any, nameSpace: string, commit: Commit, key: string, apiAuth?: string) => {
   try {
     commit(GlobalsAction.SET_LOADING, true);
@@ -44,8 +52,9 @@ export const handleApi = async (type: string, data: any, nameSpace: string, comm
 };
 
 const httpRequest = (nameSpace: string, apiAuth?: string) => {
+  const userLocal: UserInfor = localStorageServices(TypeLocal.GET, KeyLocal.USER_INFOR);
   const request: AxiosInstance = axios.create({
-    baseURL: apiAuth ? apiAuth : `https://fir-vue-ab758-default-rtdb.asia-southeast1.firebasedatabase.app/${nameSpace}.json`,
+    baseURL: apiAuth ? apiAuth : defineApiFireBase(nameSpace, userLocal),
     headers: {
       "Content-Type": "application/json",
     },
@@ -57,6 +66,7 @@ function configResponse(response: AxiosResponse<any>): any {
   if (!response.data) {
     return { message: "server not found", code: 401 };
   }
+  if (response.data.hasOwnProperty("kind")) return response.data;
   const data = Object.values(response.data);
   if (data) return data;
   if (!data) throw Object.assign(new Error("can not get data!"), { code: 404 });

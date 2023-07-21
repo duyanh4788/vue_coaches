@@ -5,7 +5,7 @@ import * as path from "path";
 const aliases = [
   { find: "src", replacement: "src" },
   { find: "assets", replacement: "src/assets" },
-  { find: "helper", replacement: "src/helper" },
+  { find: "utils", replacement: "src/utils" },
   { find: "common", replacement: "src/common" },
   { find: "styles", replacement: "src/styles" },
   { find: "components", replacement: "src/components" },

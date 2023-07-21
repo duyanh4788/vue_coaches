@@ -17,28 +17,39 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { useStore } from "stores/store";
 import { AuthAction } from "stores/modules/auth/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
+import { UserInfor } from "stores/modules/auth/state";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   setup() {
     const store = useStore();
+    const router = useRouter();
+
+    const userInfor = computed<UserInfor>(() => store.getters.getUserInfor);
+
+    watch(userInfor, (newVal) => {
+      if (newVal) {
+        router.replace("/coaches");
+      }
+    });
+
     const auth = ref({
       email: "",
       password: "",
       isValid: false,
     });
     const mode = ref<string>("login");
-
     const typeAuth = computed(() => {
       return mode.value === "login" ? "Login" : "SignUp";
     });
     const typeChange = computed(() => {
       return mode.value === "signup" ? "Login instead" : "Signup instead";
     });
-    return { auth, store, typeAuth, typeChange, mode };
+    return { auth, store, typeAuth, typeChange, mode, userInfor };
   },
   methods: {
     submitLogin() {

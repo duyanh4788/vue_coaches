@@ -12,10 +12,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, watch } from "vue";
 import TheHeader from "components/Layout/TheHeader.vue";
 import { useStore } from "stores/store";
 import { GlobalsAction } from "stores/modules/globals/actions";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -23,14 +24,21 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const router = useRouter();
     const isLoading = computed(() => store.getters.getLoading);
     const error = computed(() => store.getters.getError);
-    return { store, isLoading, error };
-  },
-  methods: {
-    clearError() {
-      this.store.dispatch(GlobalsAction.SET_ERROR);
-    },
+    const isAuth = computed(() => store.getters.getAuth);
+
+    watch(isAuth, (newVal) => {
+      if (!newVal) {
+        router.replace("/auth");
+      }
+    });
+    const clearError = () => {
+      store.dispatch(GlobalsAction.SET_ERROR);
+    };
+
+    return { store, isLoading, error, clearError };
   },
 });
 </script>
