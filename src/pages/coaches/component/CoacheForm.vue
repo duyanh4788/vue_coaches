@@ -24,7 +24,7 @@
         </div>
         <span v-if="validCoache.validAreas !== ''">{{ validCoache.validAreas }}</span>
       </div>
-      <v-button>Register</v-button>
+      <v-button>{{ nameButton }}</v-button>
     </form>
   </div>
 </template>
@@ -33,7 +33,7 @@
 import { InputInterface, ListAreaExtend, inputReg } from "common/extend";
 import { inputRegs, listAreasExtend } from "common/extend";
 import { Coache } from "stores/modules/coaches/state";
-import { SetupContext, computed, defineComponent, reactive, ref, watch } from "vue";
+import { SetupContext, computed, defineComponent, inject, reactive, ref, watch } from "vue";
 import { AppHelper } from "utils/helpers";
 import { KeyEmit } from "common/keyemit";
 import { useStore } from "stores/store";
@@ -42,14 +42,33 @@ import { onBeforeRouteLeave } from "vue-router";
 export default defineComponent({
   emits: [KeyEmit.SAVE_DATA],
   setup(_, ctx: SetupContext) {
+    const idFireBase = inject("id-firebase");
     const store = useStore();
+    const coacheStore = computed(() => store.getters.getCoache);
     const isLoading = computed(() => store.getters.getLoading);
     const renderInputRegs = ref<InputInterface[]>(inputRegs);
     const listAreas = ref<ListAreaExtend[]>(listAreasExtend);
     const validCoache = reactive<Coache>({ ...inputReg });
-    const coache = reactive<Coache>(inputReg);
+    let coache = reactive<Coache>(inputReg);
     const isValidate = ref<boolean>(false);
     const valueAreas = ref<string[]>([]);
+
+    const nameButton = computed<string>(() => {
+      if (coacheStore.value) return "Update";
+      return "Register";
+    });
+
+    watch(
+      coacheStore,
+      (newVal) => {
+        if (!newVal) return;
+        Object.assign(coache, newVal);
+        if (newVal && newVal.areas && newVal.areas.length) {
+          valueAreas.value = newVal.areas;
+        }
+      },
+      { immediate: true }
+    );
 
     const clearErr = (key: string) => {
       if (key === "rate" && coache[key]) {
@@ -102,7 +121,18 @@ export default defineComponent({
     const submitForm = () => {
       validateForm();
       if (isValidate.value) return;
-      ctx.emit(KeyEmit.SAVE_DATA, { ...coache, areas: valueAreas.value });
+      const concheCheck = coacheStore.value ? AppHelper.hasCoacheUpdate(coache, coacheStore.value) : coache;
+      const areasCheck = coacheStore.value ? AppHelper.hasAreasUpdate(coacheStore.value.areas, valueAreas.value) : valueAreas.value;
+      const idFireBaseCheck = coacheStore.value && idFireBase;
+      const payload = {
+        ...concheCheck,
+        areas: areasCheck,
+        idFireBase: idFireBaseCheck,
+        typeSubmit: coacheStore.value ? KeyEmit.UPDATE_DATA : KeyEmit.SAVE_DATA,
+      };
+      if (areasCheck === null) delete (payload as Partial<Coache>).areas;
+      if (idFireBaseCheck === null) delete (payload as Partial<Coache>).idFireBase;
+      ctx.emit(KeyEmit.SAVE_DATA, payload, coacheStore.value.idFireBase);
     };
 
     watch([coache, valueAreas], (newVal, oldVal) => {
@@ -142,6 +172,7 @@ export default defineComponent({
       validateForm,
       isInvalid,
       clearErr,
+      nameButton,
     };
   },
 });

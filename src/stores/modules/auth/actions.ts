@@ -62,6 +62,7 @@ export const actions: ActionTree<Auths, RootState> & Actions = {
       dispatch(AuthAction.LOG_OUT);
       return;
     }
+    clearTimeout(timer);
     const expiresIn = +local.expiresIn - new Date().getTime();
     if (expiresIn < 0) {
       return;

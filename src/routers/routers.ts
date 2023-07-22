@@ -18,6 +18,7 @@ export enum NameRouter {
   COACHE_ID = "/coaches/:id",
   CONTACT = "contact",
   REGISTER = "/register",
+  UPDATE_COACHE = "/register/:idFireBase",
   REQUEST_COACHE_ID = "/request/:coacheId",
   PROJECTS = "/projects",
   USERS = "/users",
@@ -36,6 +37,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [{ path: NameRouter.CONTACT, component: ContactCoach, meta: { isAuth: true } }],
   },
   { path: NameRouter.REGISTER, component: CoacheRegistration, meta: { isAuth: true } },
+  { path: NameRouter.UPDATE_COACHE, props: true, component: CoacheRegistration, meta: { isAuth: true } },
   { path: NameRouter.REQUEST_COACHE_ID, props: true, component: RequestRecived, meta: { isAuth: true } },
   { path: NameRouter.PROJECTS, component: ProjectLists, meta: { isAuth: true } },
   { path: NameRouter.USERS, component: UserLists, meta: { isAuth: true } },
@@ -48,12 +50,9 @@ const routers: Router = createRouter({
   routes,
 });
 
-routers.beforeEach((to, form, next) => {
+routers.beforeEach((to, _, next) => {
   const store = useStore();
   const getAuth = store.getters.getAuth;
-  if (form.path === NameRouter.AUTH && to.path === NameRouter.COACHES) {
-    store.dispatch(AuthAction.AUTO_LOGIN);
-  }
   if (to.meta.isAuth && !getAuth) {
     next(NameRouter.AUTH);
   } else if (to.meta.isUnAuth && getAuth) {

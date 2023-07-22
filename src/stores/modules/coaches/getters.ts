@@ -4,6 +4,7 @@ import { RootState } from "stores/rootState";
 
 export type Getters = {
   getCoaches(state: Coaches): Coache[];
+  getCoache(state: Coaches): Coache | null;
   validateCoaches(state: Coaches): boolean;
   getLastGetList(state: Coaches): boolean;
 };
@@ -11,6 +12,9 @@ export type Getters = {
 export const getters: GetterTree<Coaches, RootState> & Getters = {
   getCoaches: (state) => {
     return state.coaches;
+  },
+  getCoache: (state) => {
+    return state.coache;
   },
   validateCoaches: (state) => {
     return state.coaches && state.coaches.length > 0;

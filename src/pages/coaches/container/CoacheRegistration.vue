@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, watch } from "vue";
+import { defineComponent, onUnmounted, provide, watch } from "vue";
 import CoacheForm from "../component/CoacheForm.vue";
 import { Coache } from "stores/modules/coaches/state";
 import { useStore } from "stores/store";
@@ -20,13 +20,25 @@ import { useRouter } from "vue-router";
 import { inputReg } from "common/extend";
 import { AppHelper } from "utils/helpers";
 import { NameRouter } from "routers/routers";
+import { KeyEmit } from "common/keyemit";
 
 export default defineComponent({
   components: {
     CoacheForm,
   },
-  setup() {
+  props: {
+    idFireBase: {
+      type: String,
+    },
+  },
+  setup(props) {
     const store = useStore();
+    if (props.idFireBase) {
+      store.dispatch(CoachesAction.GET_COACHE_BY_ID, props.idFireBase);
+    }
+
+    provide("id-firebase", props.idFireBase);
+
     const router = useRouter();
 
     const resetFrom = () => {
@@ -34,14 +46,29 @@ export default defineComponent({
     };
 
     const saveData = (data: Coache) => {
-      store.dispatch(CoachesAction.REFGISTER_COACHE, data);
+      if (data.typeSubmit === KeyEmit.SAVE_DATA) {
+        delete data.typeSubmit;
+        store.dispatch(CoachesAction.REFGISTER_COACHE, data);
+        return;
+      }
+      if (data.typeSubmit === KeyEmit.UPDATE_DATA) {
+        delete data.typeSubmit;
+        if (Object.keys(data).length === 1) {
+          router.replace(NameRouter.COACHES);
+          resetFrom();
+          return;
+        }
+        store.dispatch(CoachesAction.UPDATE_DATA, data);
+        return;
+      }
     };
 
     watch(
       () => store.getters.getSuccess,
       (newVal) => {
         if (!newVal) return;
-        if (newVal && newVal.key === CoachesAction.REFGISTER_COACHE) {
+        if (newVal.key === CoachesAction.REFGISTER_COACHE || newVal.key === CoachesAction.UPDATE_DATA) {
+          store.dispatch(CoachesAction.CLEAR_COACHE);
           router.replace(NameRouter.COACHES);
           resetFrom();
         }

@@ -8,6 +8,8 @@ export enum TypeRequest {
   POST = "POST",
   GET = "GET",
   PUT = "PUT",
+  PATCH = "PATCH",
+  DELETE = "DELETE",
 }
 
 export const API_AUTH_SIGNUP = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDB0mWIRE9qmPwrHC8bE7GxZ0J2UIXEzi8";
@@ -32,6 +34,12 @@ export const handleApi = async (type: string, data: any, nameSpace: string, comm
         break;
       case TypeRequest.PUT:
         result = await httpRequest(nameSpace, apiAuth).put("", data);
+        break;
+      case TypeRequest.PATCH:
+        result = await httpRequest(nameSpace, apiAuth).patch("", data);
+        break;
+      case TypeRequest.DELETE:
+        result = await httpRequest(nameSpace, apiAuth).delete("", data);
         break;
       default:
         break;
@@ -67,7 +75,8 @@ function configResponse(response: AxiosResponse<any>): any {
     return { message: "server not found", code: 401 };
   }
   if (response.data.hasOwnProperty("kind")) return response.data;
-  const data = Object.values(response.data);
+  if (response.data.hasOwnProperty("id")) return response.data;
+  const data = defineDataFireBase(response.data);
   if (data) return data;
   if (!data) throw Object.assign(new Error("can not get data!"), { code: 404 });
   // const { data, code, message, success, status } = response.data;
@@ -90,4 +99,13 @@ function configResponseError(errors: AxiosError | any): any {
     return { code: 404, message, status };
   }
   return { message, code, success, status };
+}
+
+function defineDataFireBase(data: any) {
+  if (!data) return;
+  let result: any[] = [];
+  for (let key of Object.keys(data)) {
+    result.push({ idFireBase: key, ...data[key] });
+  }
+  return result;
 }

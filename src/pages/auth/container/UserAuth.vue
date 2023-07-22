@@ -34,6 +34,7 @@ export default defineComponent({
 
     watch(userInfor, (newVal) => {
       if (newVal) {
+        store.dispatch(AuthAction.AUTO_LOGIN);
         router.replace(NameRouter.COACHES);
       }
     });

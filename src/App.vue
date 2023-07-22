@@ -18,6 +18,7 @@ import { useStore } from "stores/store";
 import { GlobalsAction } from "stores/modules/globals/actions";
 import { useRouter } from "vue-router";
 import { NameRouter } from "routers/routers";
+import { AuthAction } from "stores/modules/auth/actions";
 
 export default defineComponent({
   components: {
@@ -25,12 +26,15 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    store.dispatch(AuthAction.AUTO_LOGIN);
     const router = useRouter();
     const isLoading = computed(() => store.getters.getLoading);
     const error = computed(() => store.getters.getError);
     const isAuth = computed(() => store.getters.getAuth);
+
     watch(isAuth, (newVal) => {
       if (!newVal) {
+        console.log(newVal);
         router.replace(NameRouter.AUTH);
       }
     });

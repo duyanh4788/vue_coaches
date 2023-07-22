@@ -1,3 +1,5 @@
+import { Coache } from "stores/modules/coaches/state";
+
 export class AppHelper {
   /**
    * Text To TitleCase
@@ -32,6 +34,24 @@ export class AppHelper {
       }
     }
     return true;
+  }
+
+  static hasCoacheUpdate(obj1: Coache, obj2: Coache) {
+    const result = { ...obj1 };
+    for (const key in obj2) {
+      if (obj1.hasOwnProperty(key) && obj1[key] === obj2[key]) {
+        delete result[key];
+      }
+    }
+    return result;
+  }
+
+  static hasAreasUpdate(a: string[], b: string[]) {
+    if (a === b) {
+      return null;
+    } else {
+      return b;
+    }
   }
 
   static validRouterLeave(obj: any): boolean {

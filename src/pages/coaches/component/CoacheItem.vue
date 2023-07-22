@@ -1,6 +1,11 @@
 <template>
   <li>
-    <h3>{{ fullName }} | {{ coache?.id }}</h3>
+    <h3>
+      {{ fullName }} | {{ coache?.id }}
+      <v-icon :icon="'fa-solid fa-trash'" :color="'spacial'" @click="deleteCoache"></v-icon>
+      <v-icon :icon="'fa-solid fa-edit'" :color="'green'" @click="updateCoche"></v-icon>
+    </h3>
+
     <h4>{{ coache.hourlyRate }}/hour</h4>
     <div>
       <v-badge v-for="area in coache.areas" :key="area" :type="area" :title="area"></v-badge>
@@ -16,8 +21,11 @@
 
 <script lang="ts">
 import { Coache } from "stores/modules/coaches/state";
+import { useStore } from "stores/store";
 import { PropType, computed, defineComponent, toRefs } from "vue";
-
+import { CoachesAction } from "stores/modules/coaches/actions";
+import { useRouter } from "vue-router";
+import { NameRouter } from "routers/routers";
 interface Props {
   coache: Coache;
 }
@@ -30,14 +38,27 @@ export default defineComponent({
     },
   },
   setup(props: Props) {
+    const store = useStore();
+    const router = useRouter();
     const { coache } = toRefs(props);
     const fullName = computed(() => coache.value.firstName + " " + coache.value.lastName);
     const detailLink = computed(() => "coaches/" + coache.value.id);
     const contactLink = computed(() => "coaches/" + coache.value.id + "/contact");
+
+    const deleteCoache = () => {
+      store.dispatch(CoachesAction.DELETE_COACHE, coache.value.idFireBase);
+    };
+
+    const updateCoche = () => {
+      router.replace(`${NameRouter.REGISTER}/${coache.value.idFireBase}`);
+    };
+
     return {
       fullName,
-      detailLink: detailLink.value,
-      contactLink: contactLink.value,
+      detailLink,
+      contactLink,
+      deleteCoache,
+      updateCoche,
     };
   },
 });
