@@ -36,7 +36,6 @@ export default defineComponent({
     const store = useStore();
     store.dispatch(RequestsAction.FIND_REQUEST_BY_COACHEID, props.coacheId);
     const requests = computed<Request[]>(() => store.getters.getRequest);
-
     onUnmounted(() => {
       store.dispatch(GlobalsAction.SET_SUCCESS, false);
       store.dispatch(GlobalsAction.SET_ERROR, null);

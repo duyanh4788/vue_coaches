@@ -9,6 +9,8 @@
   <a href="https://chat.vuejs.org/"><img src="https://img.shields.io/badge/chat-on%20discord-7289da.svg?sanitize=true" alt="Chat"></a>
 </p>
 
+# Click :point_right: [Web](https://fir-vue-ab758.web.app/)
+
 # Vue 3 + TypeScript + Vite
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.

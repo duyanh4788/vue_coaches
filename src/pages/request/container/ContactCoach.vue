@@ -72,7 +72,7 @@ export default defineComponent({
       } else {
         isValid.value = false;
         store.dispatch(RequestsAction.CONTACT_COACH, {
-          ...contact,
+          ...contact.value,
           coachId: route.params.id,
         });
       }

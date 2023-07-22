@@ -7,7 +7,7 @@
     </div>
     <hr />
     <div class="actions">
-      <v-button link :to="`/requests/${coache.id}`">Request</v-button>
+      <v-button link :to="`/request/${coache.id}`">Request</v-button>
       <v-button mode="outline" link :to="contactLink"> Contact </v-button>
       <v-button link :to="detailLink">View Detail </v-button>
     </div>

@@ -3,10 +3,12 @@ export interface Coache {
   id?: number;
   firstName?: string;
   lastName?: string;
-  areas?: string[] | any[];
+  areas?: string[];
   description?: string;
   hourlyRate?: number;
   rate?: number;
+  validAreas?: string;
+  validRate?: string;
 }
 
 export interface Coaches {

@@ -22,12 +22,24 @@ export class AppHelper {
     return true;
   }
 
-  static hasEmptyValues(obj: any): boolean {
+  static hasEmptyValues(obj: any, areas: string[]): boolean {
+    if (!areas.length) return false;
+    for (const key in obj) {
+      if (key !== "areas") {
+        if ((typeof obj[key] === "string" && obj[key] === "") || (typeof obj[key] === "number" && obj[key] === 0)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static validRouterLeave(obj: any): boolean {
     for (const key in obj) {
       if (
-        (typeof obj[key] === "string" && obj[key] === "") ||
-        (typeof obj[key] === "number" && obj[key] === 0) ||
-        (Array.isArray(obj[key]) && obj[key].length === 0)
+        (typeof obj[key] === "string" && obj[key] !== "") ||
+        (typeof obj[key] === "number" && obj[key] > 0) ||
+        (Array.isArray(obj[key]) && obj[key].length)
       ) {
         return false;
       }
@@ -37,6 +49,12 @@ export class AppHelper {
 
   static clearEmtyInObject(obj: any) {
     for (const key in obj) {
+      if (key === "areas") {
+        obj[key] = [];
+      }
+      if (key === "rate") {
+        obj[key] = 0;
+      }
       obj[key] = "";
     }
     return;

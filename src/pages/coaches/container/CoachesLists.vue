@@ -24,6 +24,7 @@ import CoacheFilter from "../component/CoacheFilter.vue";
 import { Coache } from "stores/modules/coaches/state";
 import { CoachesAction } from "stores/modules/coaches/actions";
 import { GlobalsAction } from "stores/modules/globals/actions";
+import { NameRouter } from "routers/routers";
 
 export default defineComponent({
   components: {
@@ -80,6 +81,7 @@ export default defineComponent({
       setFilter,
       refeshCoaches,
       clearError,
+      NameRouter,
     };
   },
 });

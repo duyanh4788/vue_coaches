@@ -4,8 +4,8 @@
     <form @submit.prevent="submitForm">
       <div v-for="item of renderInputRegs" :key="item.id" :class="['form-control', { invalid: isInvalid(item.value) }]">
         <label :for="item.value">{{ item.label }}</label>
-        <textarea v-if="item.id === 'description'" :id="item.id" rows="5" v-model.trim="coache[item.value]" @blur="clearErr(item.value)"></textarea>
-        <input v-else :type="item.type" :id="item.id" v-model.trim="coache[item.value]" @blur="clearErr(item.value)" />
+        <textarea v-if="item.id === 'description'" :id="item.id" rows="5" v-model.trim="coache[item.value]"></textarea>
+        <input v-else :type="item.type" :id="item.id" v-model.trim="coache[item.value]" />
         <span v-if="validCoache[item.value] !== '' && item.value !== 'rate'">{{ validCoache[item.value] }}</span>
         <span v-if="item.value === 'rate' && validCoache.validRate">{{ validCoache.validRate }}</span>
       </div>
@@ -19,7 +19,7 @@
       >
         <h3>Area of Expertise</h3>
         <div v-for="item of listAreas" :key="item.id">
-          <input type="checkbox" :id="item.id" :value="item.value" v-model="coache.areas" @blur="clearErr('validAreas')" />
+          <input type="checkbox" :id="item.id" :value="item.value" v-model="valueAreas" />
           <label :for="item.value">{{ item.label }}</label>
         </div>
         <span v-if="validCoache.validAreas !== ''">{{ validCoache.validAreas }}</span>
@@ -33,7 +33,7 @@
 import { InputInterface, ListAreaExtend, inputReg } from "common/extend";
 import { inputRegs, listAreasExtend } from "common/extend";
 import { Coache } from "stores/modules/coaches/state";
-import { SetupContext, computed, defineComponent, ref } from "vue";
+import { SetupContext, computed, defineComponent, reactive, ref, watch } from "vue";
 import { AppHelper } from "utils/helpers";
 import { KeyEmit } from "common/keyemit";
 import { useStore } from "stores/store";
@@ -46,69 +46,103 @@ export default defineComponent({
     const isLoading = computed(() => store.getters.getLoading);
     const renderInputRegs = ref<InputInterface[]>(inputRegs);
     const listAreas = ref<ListAreaExtend[]>(listAreasExtend);
-    const validCoache = ref<Coache>({ ...inputReg });
-    const coache = ref<Coache>(inputReg);
+    const validCoache = reactive<Coache>({ ...inputReg });
+    const coache = reactive<Coache>(inputReg);
     const isValidate = ref<boolean>(false);
+    const valueAreas = ref<string[]>([]);
 
     const clearErr = (key: string) => {
-      if (key === "rate" && coache.value[key]) {
-        delete validCoache.value.validRate;
+      if (key === "rate" && coache[key]) {
+        validCoache.validRate = "";
       }
-      if (key === "validAreas" && coache.value.areas && coache.value.areas.length) {
-        delete validCoache.value.validAreas;
+      if (key === "validAreas" && valueAreas.value.length) {
+        validCoache.validAreas = "";
       }
-      if ((key !== "rate" && coache.value[key]) || (key !== "validAreas" && coache.value[key])) {
-        validCoache.value[key] = "";
+      if ((key !== "rate" && coache[key]) || (key !== "validAreas" && coache[key])) {
+        validCoache[key] = "";
+      }
+    };
+
+    const validateAreas = () => {
+      if (!valueAreas.value?.length) {
+        validCoache.validAreas = "At least one expertise must be selected";
+        isValidate.value = true;
+      } else {
+        isValidate.value = false;
       }
     };
 
     const validateForm = () => {
-      if (!coache.value.areas?.length) {
-        const validAreas = "At least one expertise must be selected";
-        validCoache.value = { ...validCoache.value, validAreas };
-        isValidate.value = true;
-      } else {
-        delete validCoache.value.validAreas;
-        isValidate.value = false;
-      }
-      for (let key in coache.value) {
-        if (key !== "rate" && coache.value[key] === "") {
-          validCoache.value[key] = `***Please input ${key}`;
+      validateAreas();
+      for (let key in coache) {
+        if (key !== "rate" && coache[key] === "") {
+          validCoache[key] = `***Please input ${key}`;
           isValidate.value = true;
         }
-        if (key === "rate" && !coache.value?.rate) {
-          const validRate = `***Please input rate`;
-          validCoache.value = { ...validCoache.value, validRate };
+        if (key === "rate" && !coache.rate) {
+          validCoache.validRate = `***Please input rate`;
           isValidate.value = true;
         }
       }
-      const isCheckedCoache = AppHelper.hasEmptyValues(coache.value);
+      const isCheckedCoache = AppHelper.hasEmptyValues(coache, valueAreas.value);
       if (isCheckedCoache) {
         isValidate.value = false;
-        AppHelper.clearEmtyInObject(validCoache.value);
+        AppHelper.clearEmtyInObject(validCoache);
       }
     };
 
     const isInvalid = computed(() => (key: string) => {
-      if (validCoache.value[key] !== "" && key !== "rate") {
+      if (validCoache[key] !== "" && key !== "rate") {
         return true;
       }
-      if (key === "rate" && validCoache.value.validRate) return true;
+      if (key === "rate" && validCoache.validRate) return true;
       return false;
     });
 
     const submitForm = () => {
       validateForm();
       if (isValidate.value) return;
-      ctx.emit(KeyEmit.SAVE_DATA, coache.value);
+      ctx.emit(KeyEmit.SAVE_DATA, { ...coache, areas: valueAreas.value });
     };
 
-    onBeforeRouteLeave((_, _2) => {
-      const answer = window.confirm("Do you really want to leave? you have unsaved changes!");
-      if (!answer) return false;
+    watch([coache, valueAreas], (newVal, oldVal) => {
+      const isCheckedCoache = AppHelper.hasEmptyValues(validCoache, valueAreas.value);
+      if (isCheckedCoache) return;
+      for (let key in newVal[0]) {
+        clearErr(key);
+      }
+      if (oldVal[1].length && !newVal[1].length) {
+        validateAreas();
+      }
+      if (newVal[1].length) {
+        clearErr("validAreas");
+      }
     });
 
-    return { isLoading, renderInputRegs, validCoache, listAreas, coache, isValidate, submitForm, validateForm, isInvalid, clearErr };
+    onBeforeRouteLeave(() => {
+      const isCheckedCoache = AppHelper.validRouterLeave(coache);
+      if (isCheckedCoache) {
+        AppHelper.clearEmtyInObject(inputReg);
+        return true;
+      }
+      const answer = window.confirm("Do you really want to leave? you have unsaved changes!");
+      if (!answer) return false;
+      AppHelper.clearEmtyInObject(inputReg);
+    });
+
+    return {
+      valueAreas,
+      isLoading,
+      renderInputRegs,
+      validCoache,
+      listAreas,
+      coache,
+      isValidate,
+      submitForm,
+      validateForm,
+      isInvalid,
+      clearErr,
+    };
   },
 });
 </script>

@@ -6,6 +6,8 @@ import CoacheRegistration from "pages/coaches/container/CoacheRegistration.vue";
 import RequestRecived from "pages/request/container/RequestRecived.vue";
 import NotFound from "pages/notfound/NotFound.vue";
 import UserAuth from "pages/auth/container/UserAuth.vue";
+import ProjectLists from "pages/projects/container/ProjectLists.vue";
+import UserLists from "pages/users/container/UserLists.vue";
 import { useStore } from "stores/store";
 import { AuthAction } from "stores/modules/auth/actions";
 
@@ -16,7 +18,9 @@ export enum NameRouter {
   COACHE_ID = "/coaches/:id",
   CONTACT = "contact",
   REGISTER = "/register",
-  REGISTER_COACHE_ID = "/register/:coacheId",
+  REQUEST_COACHE_ID = "/request/:coacheId",
+  PROJECTS = "/projects",
+  USERS = "/users",
   NOTFOUND = "/:notFound(.*)",
 }
 
@@ -32,7 +36,9 @@ const routes: Array<RouteRecordRaw> = [
     children: [{ path: NameRouter.CONTACT, component: ContactCoach, meta: { isAuth: true } }],
   },
   { path: NameRouter.REGISTER, component: CoacheRegistration, meta: { isAuth: true } },
-  { path: NameRouter.REGISTER_COACHE_ID, props: true, component: RequestRecived, meta: { isAuth: true } },
+  { path: NameRouter.REQUEST_COACHE_ID, props: true, component: RequestRecived, meta: { isAuth: true } },
+  { path: NameRouter.PROJECTS, component: ProjectLists, meta: { isAuth: true } },
+  { path: NameRouter.USERS, component: UserLists, meta: { isAuth: true } },
   { path: NameRouter.NOTFOUND, component: NotFound },
 ];
 

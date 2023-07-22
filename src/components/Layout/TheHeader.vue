@@ -1,9 +1,11 @@
 <template>
   <header>
     <nav>
-      <h1><router-link to="/">Find a Coach</router-link></h1>
+      <h1><router-link :to="{ path: NameRouter.HOME }">Find a Coach</router-link></h1>
       <ul>
-        <li><router-link to="/coaches">All Coaches</router-link></li>
+        <li><router-link :to="{ path: NameRouter.COACHES }">All Coaches</router-link></li>
+        <li><router-link :to="{ path: NameRouter.PROJECTS }">Projects</router-link></li>
+        <li><router-link :to="{ path: NameRouter.USERS }">Users</router-link></li>
         <li v-if="isAuth">
           <v-button @click="logout">Logout</v-button>
         </li>
@@ -31,7 +33,7 @@ export default defineComponent({
       store.dispatch(AuthAction.LOG_OUT);
       router.replace(NameRouter.AUTH);
     };
-    return { isAuth, router, store, logout };
+    return { isAuth, router, store, logout, NameRouter };
   },
 });
 </script>
